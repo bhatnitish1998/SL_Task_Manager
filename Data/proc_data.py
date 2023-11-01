@@ -82,6 +82,7 @@ class ProcessInfo:
         self.stat_fd.close()
 
     def __dict__(self):
+        self.update_stats()
         return {
             "name": self.name,
             "threads": self.threads,
@@ -93,9 +94,11 @@ class ProcessInfo:
         }
 
     def __repr__(self):
+        self.update_stats()
         return f"ProcessInfo(pid={self.pid}, name={self.name}, threads={self.threads}, state={self.state}, cpu_usage={self.cpu_usage:.2f}%, mem_usage={self.mem_usage:.2f} MB, start_time={self.start_time}, running_time={self.running_time:.2f} seconds)"
 
     def __str__(self):
+        self.update_stats()
         return f"Process ID: {self.pid}\nProcess Name: {self.name}\nThreads: {self.threads}\nState: {self.state}\nCPU Usage: {self.cpu_usage:.2f}%\nMemory Usage: {self.mem_usage:.2f} MB\nStart Time: {self.start_time}\nRunning Time: {self.running_time:.2f} seconds"
 
 
