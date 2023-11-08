@@ -4,14 +4,23 @@ import datetime
 class ProcessInfo:
     '''
     Class to parse proc file and gather stats about the processes
+    Available attributes:
+    name
+    threads
+    state
+    cpu_usage
+    mem_usage
+    start_time
+    running_time
     '''
 
     def __init__(self, pid) -> None:
         self.proc_path = '/proc'
         self.pid = pid
+        self.user = "user"
         self.stat_fd = open(os.path.join(self.proc_path, str(self.pid), 'stat'), 'r')
         self.update_stats()
-    
+
     def update_stats(self,):
         self.stat_fd.seek(0)
         self.stat_raw = self.stat_fd.read()
@@ -77,6 +86,21 @@ class ProcessInfo:
         uptime = self.get_uptime()
         start_time_seconds = datetime.datetime.now().timestamp() - (starttime - uptime)
         return start_time_seconds
+    
+    def get_data(self):
+        self.update_stats()
+        return [
+            self.pid,
+            self.user,
+            self.name,
+            self.threads,
+            self.state,
+            self.cpu_usage,
+            self.mem_usage,
+            self.start_time,
+            self.running_time
+        ]
+
 
     def __del__(self):
         self.stat_fd.close()
@@ -84,6 +108,8 @@ class ProcessInfo:
     def __dict__(self):
         self.update_stats()
         return {
+            "pid": self.pid,
+            "user": self.user,
             "name": self.name,
             "threads": self.threads,
             "state": self.state,
@@ -108,9 +134,9 @@ class ProcessesData:
     '''
     def __init__(self) -> None:
         self.proc_path = '/proc'
-        self.processes = self.get_process_info()
+        self.processes = self._get_process_info()
 
-    def get_process_info(self):
+    def _get_process_info(self):
         '''
         Get the process info for all processes
         '''
@@ -124,6 +150,14 @@ class ProcessesData:
                     # Ignore processes that may have exited between listing and reading
                     pass
         return process_info
+    
+    def get_processes(self):
+        self.processes = self._get_process_info()
+        return self.processes
+    
+    def get_data(self):
+        self.processes = self._get_process_info()
+        return [process.get_data() for process in self.processes]
 
 
 
