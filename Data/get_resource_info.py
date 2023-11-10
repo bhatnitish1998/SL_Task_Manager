@@ -29,10 +29,17 @@ class MemoryInfo:
         self.used = self.total - self.free
         self.swap_used = self.swap_total - self.swap_free
 
-    def return_meminfo(self):
+    def get_memory_usage(self):
         self.update_meminfo()
-        return {"total": self.total, "free": self.free, "available": self.available, "used": self.used,
-                "s_total": self.swap_total, "s_free": self.swap_free, "s_used": self.swap_used}
+        return [
+            self.total,
+            self.free,
+            self.available,
+            self.used,
+            self.swap_total,
+            self.swap_free,
+            self.swap_used,
+        ]
 
 
 class DiskInfo:
@@ -52,11 +59,15 @@ class DiskInfo:
         self.number_of_disks = len(self.disk_data.keys())
 
     def update_diskinfo(self):
-        result = subprocess.run(["df"], shell=True, capture_output=True, text=True).stdout.strip().split('\n')
+        result = subprocess.run(
+            ["df"], shell=True, capture_output=True, text=True).stdout.strip().split('\n')
         for line in result:
             row = line.split()
             for key in self.disk_data.keys():
                 if key in row[0]:
                     self.disk_data[key][1] = (int(row[2]))
                     self.disk_data[key][2] = (int(row[3]))
-        print(self.disk_data)
+
+    def get_disk_usage(self):
+        self.get_meta_info()
+        return self.disk_data
