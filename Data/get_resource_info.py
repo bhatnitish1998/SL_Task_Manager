@@ -29,6 +29,11 @@ class MemoryInfo:
         self.used = self.total - self.free
         self.swap_used = self.swap_total - self.swap_free
 
+    def return_meminfo(self):
+        self.update_meminfo()
+        return {"total": self.total, "free": self.free, "available": self.available, "used": self.used,
+                "s_total": self.swap_total, "s_free": self.swap_free, "s_used": self.swap_used}
+
 
 class DiskInfo:
     def __init__(self):
