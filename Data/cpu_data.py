@@ -25,7 +25,8 @@ class CPUInfo:
         self.prev_cpu_stats = self._init_cpu_stats()
         self.number_cores = self._get_cpu_cores()
         self.prev_cpu_usage = {}
-        self.cpu_meta = self._get_cpu_meta()
+        self.cpu_meta_raw = self._get_cpu_meta()
+        self.cpu_meta = self._formatted_cpu_meta()
 
     def _get_proc_stat_fd(self):
         return open('/proc/stat', 'r')
@@ -102,14 +103,30 @@ class CPUInfo:
 
         return cpu_meta
 
+    def _formatted_cpu_meta(self):
+        if not self.cpu_meta_raw:
+            self.cpu_meta_raw = self._get_cpu_meta()
+
+        cpu_meta = {}
+        cpu_meta["Model name"] = f'CPU Model : {self.cpu_meta_raw["Model name"]}'
+        cpu_meta['l1i_cache'] = f'L1 Instruction Cache : {self.cpu_meta_raw["L1d cache"]}'
+        cpu_meta['l1d_cache'] = f'L1 Data Cache : {self.cpu_meta_raw["L1i cache"]}'
+        cpu_meta['l2_cache'] = f'L2 Cache : {self.cpu_meta_raw["L2 cache"]}'
+        cpu_meta['l3_cache'] = f'L3 Cache : {self.cpu_meta_raw["L3 cache"]}'
+        cpu_meta['cores'] = f'Number of cores : {self.cpu_meta_raw["CPU(s)"]}'
+        cpu_meta['threads'] = f'Threads pre core : {self.cpu_meta_raw["Thread(s) per core"]}'
+        cpu_meta['max_cpu_freq'] = f'MAX CPU Frequency : {float(self.cpu_meta_raw["CPU max MHz"])/1000} GHz'
+
+        return cpu_meta
+
 
 if __name__ == "__main__":
     cpu_info = CPUInfo()
     print(cpu_info.cpu_meta)
-    while True:
-        time.sleep(1)  # Wait for a while to measure the change in CPU usage
-        cpu_usage = cpu_info.get_cpu_usage()
+    # while True:
+    #     time.sleep(1)  # Wait for a while to measure the change in CPU usage
+    #     cpu_usage = cpu_info.get_cpu_usage()
 
-        print("CPU Usage:")
-        for cpu_core, cpu_usage in cpu_usage.items():
-            print(f'{cpu_core}: {cpu_usage["usage"]}%')
+    #     print("CPU Usage:")
+    #     for cpu_core, cpu_usage in cpu_usage.items():
+    #         print(f'{cpu_core}: {cpu_usage["usage"]}%')
