@@ -191,12 +191,3 @@ class ProcessesData:
         self.processes = self.get_processes()
         data = [process.get_data() for process in self.processes]
         return [process_data for process_data in data if process_data is not None]
-
-
-
-if __name__ == "__main__":
-    processData = ProcessesData()
-    for process in processData.processes[-5:]:
-        print('-'*20)
-        print(process)
-        print('\n')
