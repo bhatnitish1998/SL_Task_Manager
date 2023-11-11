@@ -1,6 +1,5 @@
 import subprocess
 
-
 # all attributes are in kb right now
 class MemoryInfo:
     def __init__(self):
@@ -40,33 +39,49 @@ class DiskInfo:
         self.number_of_disks = 0
         # dictionary key = name value = [total capacity ,used ,available for linux]
         self.disk_data = {}
+        self.fs_data =[]
+
+    def kb_to_print(self,value):
+        result = f"{value:.2f} KB"
+        if value > 1024:
+            value = value / 1024
+            result = f"{value:.2f} MB"
+        if value > 1024:
+            value = value / 1024
+            result = f"{value:.2f} GB"
+        return result
 
     def get_meta_info(self):
         result = subprocess.run(["lsblk | grep disk"], shell=True, capture_output=True, text=True).stdout.strip().split(
             '\n')
         for line in result:
             row = line.split()
-            self.disk_data[row[0]] = [0, 0, 0]
-            self.disk_data[row[0]][0] = (float(row[3][:-1]) * (2 ** 20))
-
+            self.disk_data[row[0]] =(float(row[3][:-1]) * (2 ** 20))
         self.number_of_disks = len(self.disk_data.keys())
 
-    def update_diskinfo(self):
+    def get_fs_info(self):
+        self.fs_data.clear()
         result = subprocess.run(
-            ["df"], shell=True, capture_output=True, text=True).stdout.strip().split('\n')
+            ["df"], shell=True, capture_output=True, text=True).stdout.strip().split('\n')[1:]
         for line in result:
             row = line.split()
-            for key in self.disk_data.keys():
-                if key in row[0]:
-                    self.disk_data[key][1] = (int(row[2]))
-                    self.disk_data[key][2] = (int(row[3]))
-
-
+            if(row[0] != 'tmpfs'):
+                used = self.kb_to_print(int(row[2]))
+                available = self.kb_to_print(int(row[3]))
+                # used = f'{int(row[2])/(1024*1024):.2f} GB'
+                # available = f'{int(row[3])/(1024*1024):.2f} GB'
+                self.fs_data.append([row[0],used,available,row[4][:-1]])
+                # self.fs_data[row[0]]={}
+                # self.fs_data[row[0]]["used"]=int(row[2])
+                # self.fs_data[row[0]]["available"] =int(row[3])
+                # self.fs_data[row[0]]["use_percent"] =int(row[4][:-1])
+        return self.fs_data
 
     def get_disk_usage(self):
         self.get_meta_info()
         return self.disk_data
 
+
 if __name__ == "__main__":
     d = DiskInfo()
-    d.update_diskinfo()
+    d.get_fs_info()

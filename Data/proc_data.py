@@ -118,13 +118,13 @@ class ProcessInfo:
         return [
             self.user,
             self.pid,
-            self.name,
             self.state,
             self.threads,
             self.cpu_usage,
             self.mem_usage,
             self.start_time,
-            self.running_time
+            self.running_time,
+            self.name
         ]
 
     def __del__(self):

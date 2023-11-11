@@ -28,6 +28,7 @@ class SystemInfo:
         self.cpu_info = CPUInfo()
         self.cpu_meta = self.cpu_info.cpu_meta
         self.cpu_cores = self.cpu_info.number_cores
+        self.fs_info = self.disk_info.get_fs_info()
 
     def get_process_data(self,):
         return self.processes_data.get_data()
