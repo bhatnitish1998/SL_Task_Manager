@@ -31,15 +31,8 @@ class MemoryInfo:
 
     def get_memory_usage(self):
         self.update_meminfo()
-        return [
-            self.total,
-            self.free,
-            self.available,
-            self.used,
-            self.swap_total,
-            self.swap_free,
-            self.swap_used,
-        ]
+        return {"total": self.total, "free": self.free, "available": self.available, "used": self.used,
+                "s_total": self.swap_total, "s_free": self.swap_free, "s_used": self.swap_used}
 
 
 class DiskInfo:
@@ -68,6 +61,12 @@ class DiskInfo:
                     self.disk_data[key][1] = (int(row[2]))
                     self.disk_data[key][2] = (int(row[3]))
 
+
+
     def get_disk_usage(self):
         self.get_meta_info()
         return self.disk_data
+
+if __name__ == "__main__":
+    d = DiskInfo()
+    d.update_diskinfo()

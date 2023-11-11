@@ -25,7 +25,7 @@ class SystemInfo:
         self.memory_info = MemoryInfo()
 
     def get_process_data(self,):
-        return self.processes_data.get_processes()
+        return self.processes_data.get_data()
 
     def get_mem_data(self):
         return self.memory_info.get_memory_usage()
