@@ -1,6 +1,7 @@
 from Data.get_resource_info import DiskInfo, MemoryInfo
 from Data.proc_data import ProcessesData
 from Data.network_data import NetworkInfo
+from Data.cpu_data import CPUInfo
 
 
 class SystemInfo:
@@ -24,6 +25,10 @@ class SystemInfo:
         self.disk_info = DiskInfo()
         self.memory_info = MemoryInfo()
 
+        self.cpu_info = CPUInfo()
+        self.cpu_meta = self.cpu_info.cpu_meta
+        self.cpu_cores = self.cpu_info.number_cores
+
     def get_process_data(self,):
         return self.processes_data.get_data()
 
@@ -35,3 +40,6 @@ class SystemInfo:
 
     def get_network_data(self):
         return self.network_data.get_network_usage()
+
+    def get_cpu_data(self):
+        return self.cpu_info.get_cpu_usage()
