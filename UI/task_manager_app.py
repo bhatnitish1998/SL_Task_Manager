@@ -1,13 +1,11 @@
 from PyQt6.QtCore import QTimer
-from PyQt6.QtGui import QIcon
+from PyQt6.QtGui import QIcon, QFont
 import pyqtgraph as pg
-from PyQt6.QtWidgets import QWidget, QApplication, QTableWidgetItem
+from PyQt6.QtWidgets import QWidget, QApplication, QTableWidgetItem, QLabel, QProgressBar, QHeaderView
 from task_manager_ui import Ui_main_window
 import sys
 from Data.get_resource_info import MemoryInfo
 from Data.get_all_data import SystemInfo
-from Data.cpu_data import CPUInfo
-import random
 
 
 class TaskManagerWindow(QWidget, Ui_main_window):
@@ -83,6 +81,49 @@ class TaskManagerWindow(QWidget, Ui_main_window):
         pen = pg.mkPen(color=(0, 255, 0), width=5)
         self.cpu_line = self.cpu_overall_graph.plot(self.cpu_graph_x, self.cpu_graph_y, pen=pen)
 
+        # add  diskinfo
+        data = self.system_info.get_disk_data()
+        for i in data.keys():
+            label_disk_iter = QLabel()
+            disk_str = f"{i}: {data[i] / (1024 * 1024)} GB"
+            label_disk_iter.setText(disk_str)
+            label_disk_iter.setFont(QFont("Ubuntu", 15))
+            self.hbox_disk_info.addWidget(label_disk_iter)
+
+        # add filesystem info
+        data = self.system_info.fs_info
+        print(data)
+        n_row = len(data)
+        cols = ["File-system", "Used", "Available", "Percent Used"]
+        n_col = len(cols)
+        self.table_file_system.setRowCount(n_row)
+        self.table_file_system.setColumnCount(n_col)
+
+        for i in range(n_row):
+            self.table_file_system.setRowHeight(i,50)
+        headers = self.table_file_system.horizontalHeader()
+        for i in range(n_col - 1):
+            headers.setSectionResizeMode(i, QHeaderView.ResizeMode.ResizeToContents)
+
+        for i in range(len(cols)):
+            cell = QTableWidgetItem(cols[i])
+            cell.setTextAlignment(4)
+            self.table_file_system.setItem(0, i, cell)
+            self.table_file_system.setFont(QFont("Ubuntu", 15))
+
+        for row in range(n_row):
+            for column in range(n_col):
+                if column == 3:
+                    progbar = QProgressBar()
+                    progbar.setValue(int(data[row][column]))
+                    progbar.setStyleSheet("QProgressBar {background-color: #00ff00; color:white;}"
+                                          "QProgressBar::chunk{background-color: #000000; padding:50px}")
+                    self.table_file_system.setCellWidget(row, column, progbar)
+                else:
+                    my_item = QTableWidgetItem(str(data[row][column]))
+                    my_item.setTextAlignment(4)
+                    self.table_file_system.setItem(row, column, my_item)
+
     def update_cpu_info(self):
         data = self.system_info.get_cpu_data()
 
@@ -122,17 +163,17 @@ class TaskManagerWindow(QWidget, Ui_main_window):
         used = data["used"] / div_factor
         total = data["total"] / div_factor
         used_percent = (used / total) * 100
-        mem_string = f"Memory : {used:2.2f} GB ({used_percent:2.1f}%) of {total:2.2f} GB"
+        mem_string = f"{used:2.2f} GB ({used_percent:2.1f}%) of {total:2.2f} GB"
         self.label_mem_usage.setText(mem_string)
 
         # update swap label
         s_total = data["s_total"] / div_factor
-        if s_total != None or 0:
+        if s_total != 0:
             s_used = data["s_used"] / div_factor
             s_used_percent = (s_used / s_total) * 100
-            swap_string = f"Swap: {s_used:2.2f} GB ({s_used_percent:2.1f}%) of {s_total:2.2f} GB"
+            swap_string = f"{s_used:2.2f} GB ({s_used_percent:2.1f}%) of {s_total:2.2f} GB"
         else:
-            swap_string = "Swap: Unavailable"
+            swap_string = "Unavailable"
         self.label_swap_usage.setText(swap_string)
 
         # update graph

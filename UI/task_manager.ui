@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>764</width>
-    <height>693</height>
+    <width>813</width>
+    <height>735</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabs">
      <property name="currentIndex">
-      <number>3</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_processes">
       <attribute name="title">
@@ -26,12 +26,21 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QTableWidget" name="table_processes">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="alternatingRowColors">
           <bool>true</bool>
          </property>
          <property name="sortingEnabled">
           <bool>true</bool>
          </property>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
          <column>
           <property name="text">
            <string>User</string>
@@ -40,11 +49,6 @@
          <column>
           <property name="text">
            <string>Pid</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Name</string>
           </property>
          </column>
          <column>
@@ -75,6 +79,11 @@
          <column>
           <property name="text">
            <string>Running</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Name</string>
           </property>
          </column>
         </widget>
@@ -418,18 +427,145 @@
      </widget>
      <widget class="QWidget" name="tab_memory">
       <attribute name="title">
-       <string>Memory</string>
+       <string>Memory/Disk</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <layout class="QHBoxLayout" name="hbox_mem_graph"/>
+        <widget class="QLabel" name="label_mem_graph_title">
+         <property name="text">
+          <string>Memory Utilization</string>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_mem_usage">
+        <layout class="QHBoxLayout" name="hbox_mem_graph">
+         <property name="bottomMargin">
+          <number>25</number>
+         </property>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="hbox_memory_usage">
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>50</number>
+         </property>
+         <item>
+          <layout class="QVBoxLayout" name="vbox_memory">
+           <item>
+            <widget class="QLabel" name="label_memory_info">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>200</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Memory</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_mem_usage">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>200</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="vbox_swap">
+           <item>
+            <widget class="QLabel" name="label_swap">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>200</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Swap</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_swap_usage">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>200</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_disk_info">
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>100</height>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -440,20 +576,28 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>20</pointsize>
+           <pointsize>15</pointsize>
+           <bold>true</bold>
           </font>
          </property>
          <property name="text">
-          <string>Memory Usage</string>
+          <string>Disks</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_swap_usage">
+        <layout class="QHBoxLayout" name="hbox_disk_info">
+         <property name="bottomMargin">
+          <number>25</number>
+         </property>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_fs_info">
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>100</height>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -464,126 +608,47 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>20</pointsize>
+           <pointsize>15</pointsize>
+           <bold>true</bold>
           </font>
          </property>
          <property name="text">
-          <string>Swap Usage</string>
+          <string>Mounted File Systems</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="vbox_file_system">
+         <item>
+          <widget class="QTableWidget" name="table_file_system">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>100</height>
+            </size>
+           </property>
+           <attribute name="horizontalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderStretchLastSection">
+            <bool>false</bool>
+           </attribute>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_network">
       <attribute name="title">
-       <string>Network/Disk</string>
+       <string>Network</string>
       </attribute>
-      <widget class="QWidget" name="horizontalLayoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>30</y>
-         <width>681</width>
-         <height>141</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="hbox_transmit_graph"/>
-      </widget>
-      <widget class="QWidget" name="horizontalLayoutWidget_2">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>210</y>
-         <width>681</width>
-         <height>141</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="hbox_receive_graph"/>
-      </widget>
-      <widget class="QLabel" name="label_disk_info">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>380</y>
-         <width>356</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>200</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>15</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Disks</string>
-       </property>
-      </widget>
-      <widget class="QWidget" name="horizontalLayoutWidget_3">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>410</y>
-         <width>671</width>
-         <height>80</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="hbox_disk_info"/>
-      </widget>
-      <widget class="QLabel" name="label_cache_info_3">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>510</y>
-         <width>356</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>200</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>15</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Mounted File Systems</string>
-       </property>
-      </widget>
-      <widget class="QWidget" name="verticalLayoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>40</x>
-         <y>550</y>
-         <width>651</width>
-         <height>80</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="vbox_file_system"/>
-      </widget>
      </widget>
     </widget>
    </item>
