@@ -1,7 +1,8 @@
 from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QIcon, QFont
 import pyqtgraph as pg
-from PyQt6.QtWidgets import QWidget, QApplication, QTableWidgetItem, QLabel, QProgressBar, QHeaderView
+from PyQt6.QtWidgets import QWidget, QApplication, QTableWidgetItem, QLabel, QProgressBar, QHeaderView, QHBoxLayout, \
+    QVBoxLayout
 from task_manager_ui import Ui_main_window
 import sys
 from Data.get_resource_info import MemoryInfo
@@ -90,39 +91,38 @@ class TaskManagerWindow(QWidget, Ui_main_window):
             label_disk_iter.setFont(QFont("Ubuntu", 15))
             self.hbox_disk_info.addWidget(label_disk_iter)
 
+
         # add filesystem info
+        # self.vbox_file_system.addWidget()
         data = self.system_info.fs_info
-        print(data)
-        n_row = len(data)
         cols = ["File-system", "Used", "Available", "Percent Used"]
-        n_col = len(cols)
-        self.table_file_system.setRowCount(n_row)
-        self.table_file_system.setColumnCount(n_col)
+        vbox_t = []
+        for i  in range(len(cols)):
+            vbox_t.append(QVBoxLayout())
+            label = QLabel()
+            label.setText(cols[i])
+            font = QFont("Ubuntu",12)
+            font.setBold(True)
+            label.setFont(font)
+            vbox_t[i].addWidget(label)
 
-        for i in range(n_row):
-            self.table_file_system.setRowHeight(i,50)
-        headers = self.table_file_system.horizontalHeader()
-        for i in range(n_col - 1):
-            headers.setSectionResizeMode(i, QHeaderView.ResizeMode.ResizeToContents)
-
-        for i in range(len(cols)):
-            cell = QTableWidgetItem(cols[i])
-            cell.setTextAlignment(4)
-            self.table_file_system.setItem(0, i, cell)
-            self.table_file_system.setFont(QFont("Ubuntu", 15))
-
-        for row in range(n_row):
-            for column in range(n_col):
-                if column == 3:
+        for row in data:
+            for i in range(len(row)):
+                if i ==3:
                     progbar = QProgressBar()
-                    progbar.setValue(int(data[row][column]))
+                    progbar.setValue(int(row[i]))
                     progbar.setStyleSheet("QProgressBar {background-color: #00ff00; color:white;}"
-                                          "QProgressBar::chunk{background-color: #000000; padding:50px}")
-                    self.table_file_system.setCellWidget(row, column, progbar)
+                                                      "QProgressBar::chunk{background-color: #000000; padding:50px}")
+                    vbox_t[i].addWidget(progbar)
                 else:
-                    my_item = QTableWidgetItem(str(data[row][column]))
-                    my_item.setTextAlignment(4)
-                    self.table_file_system.setItem(row, column, my_item)
+                    label = QLabel()
+                    label.setText(row[i])
+                    vbox_t[i].addWidget(label)
+
+        for i in range(len(vbox_t)):
+            self.hbox_file_system.addLayout(vbox_t[i])
+
+
 
     def update_cpu_info(self):
         data = self.system_info.get_cpu_data()
