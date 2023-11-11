@@ -111,7 +111,10 @@ class NetworkInfo:
         current_network_data = self._parse_stat_data()
         current_timestamp = datetime.datetime.now()
         time_delta = current_timestamp - self.previous_timestamp
+
         network_usage = {}
+        network_usage["total"] = {"rx_Bps": 0, "tx_Bps": 0, }
+
         for interface, interface_stat in current_network_data.items():
             network_usage[interface] = {}
             delta_rx_bytes = (
@@ -146,6 +149,23 @@ class NetworkInfo:
             network_usage[interface]["tx_KBps"] = tx_kilobytes_per_second
             network_usage[interface]["tx_MBps"] = tx_mega_bytes_per_second
             network_usage[interface]["tx_GBps"] = tx_giga_bytes_per_second
+
+            network_usage["total"]["rx_Bps"] += rx_bytes_per_second
+            network_usage["total"]["tx_Bps"] += tx_bytes_per_second
+
+        network_usage["total"]["rx_KBps"] = round(
+            bytes_to_kilobytes_per_second(network_usage["total"]["rx_Bps"]), 2)
+        network_usage["total"]["rx_MBps"] = round(
+            bytes_to_megabytes_per_second(network_usage["total"]["rx_Bps"]), 2)
+        network_usage["total"]["rx_GBps"] = round(
+            bytes_to_gigabytes_per_second(network_usage["total"]["rx_Bps"]), 2)
+        network_usage["total"]["tx_KBps"] = round(
+            bytes_to_kilobytes_per_second(network_usage["total"]["tx_Bps"]), 2)
+        network_usage["total"]["tx_MBps"] = round(
+            bytes_to_megabytes_per_second(network_usage["total"]["tx_Bps"]), 2)
+        network_usage["total"]["tx_GBps"] = round(
+            bytes_to_gigabytes_per_second(network_usage["total"]["tx_Bps"]), 2)
+
         self.previous_stat_data = current_network_data
         self.previous_timestamp = current_timestamp
         return network_usage
