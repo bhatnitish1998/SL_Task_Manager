@@ -20,6 +20,7 @@ class TaskManagerWindow(QWidget, Ui_main_window):
 
         # system info
         self.system_info = SystemInfo()
+        self.set_cpu_info()
 
         # set timer for update
         self.proc_timer = QTimer()
@@ -91,6 +92,18 @@ class TaskManagerWindow(QWidget, Ui_main_window):
         self.cpu_graph_y.append(r)
         self.cpu_line.setData(self.cpu_graph_x, self.cpu_graph_y)
 
+    def set_cpu_info(self):
+        self.label_cpu_model.setText("CPU Model : 13th Gen Intel(R) Core(TM) i9-13900HX")
+        self.label_core_info.setText("Core info")
+        self.label_cache_info.setText("Cache info")
+        self.label_l1_i_cache.setText("L1 I :  896KB (24 instances)")
+        self.label_l1_d_cache.setText("L1 D :  1.3 MB  (24 instances)")
+        self.label_l2_cache.setText("L 2 :  32 MB (12 instances)")
+        self.label_l3_cache.setText("L3  :  36 MB  (1 instances )")
+        self.label_cores.setText("Cores : 24")
+        self.label_threads_per_core.setText("Threads per core: 2")
+        self.label_max_cpu_speed.setText("Max CPU speed : 5.4 GHz")
+
 
     def update_core_info(self):
         # cpu = CPUInfo()
@@ -115,10 +128,13 @@ class TaskManagerWindow(QWidget, Ui_main_window):
         self.label_mem_usage.setText(mem_string)
 
         # update swap label
-        s_used = data["s_used"] / div_factor
         s_total = data["s_total"] / div_factor
-        s_used_percent = (s_used / s_total) * 100
-        swap_string = f"Swap: {s_used:2.2f} GB ({s_used_percent:2.1f}%) of {s_total:2.2f} GB"
+        if s_total != None or 0:
+            s_used = data["s_used"] / div_factor
+            s_used_percent = (s_used / s_total) * 100
+            swap_string = f"Swap: {s_used:2.2f} GB ({s_used_percent:2.1f}%) of {s_total:2.2f} GB"
+        else:
+            swap_string = "Swap: Unavailable"
         self.label_swap_usage.setText(swap_string)
 
         # update graph
