@@ -2,28 +2,7 @@ import os
 import time
 import json
 import datetime
-from Data.utility import kb_to_print
-
-
-def bytes_to_kilobytes_per_second(bytes_per_second: float) -> float:
-    """
-    Converts a number of bytes per second to kilobytes per second.
-    """
-    return bytes_per_second / 1024
-
-
-def bytes_to_megabytes_per_second(bytes_per_second: float) -> float:
-    """
-    Converts a number of bytes per second to megabytes per second.
-    """
-    return bytes_per_second / (1024 * 1024)
-
-
-def bytes_to_gigabytes_per_second(bytes_per_second: float) -> float:
-    """
-    Converts a number of bytes per second to gigabytes per second.
-    """
-    return bytes_per_second / (1024 * 1024 * 1024)
+from Data.utility_functions import kb_to_print, bytes_to_kilobytes, bytes_to_megabytes, bytes_to_gigabytes
 
 
 class NetworkInfo:
@@ -173,17 +152,17 @@ class NetworkInfo:
             tx_bytes_per_second = round(
                 delta_tx_bytes / time_delta.total_seconds(), 2)
             rx_kilobytes_per_second = round(
-                bytes_to_kilobytes_per_second(rx_bytes_per_second), 2)
+                bytes_to_kilobytes(rx_bytes_per_second), 2)
             rx_mega_bytes_per_second = round(
-                bytes_to_megabytes_per_second(rx_bytes_per_second), 2)
+                bytes_to_megabytes(rx_bytes_per_second), 2)
             rx_giga_bytes_per_second = round(
-                bytes_to_gigabytes_per_second(rx_bytes_per_second), 2)
+                bytes_to_gigabytes(rx_bytes_per_second), 2)
             tx_kilobytes_per_second = round(
-                bytes_to_kilobytes_per_second(tx_bytes_per_second), 2)
+                bytes_to_kilobytes(tx_bytes_per_second), 2)
             tx_mega_bytes_per_second = round(
-                bytes_to_megabytes_per_second(tx_bytes_per_second), 2)
+                bytes_to_megabytes(tx_bytes_per_second), 2)
             tx_giga_bytes_per_second = round(
-                bytes_to_gigabytes_per_second(tx_bytes_per_second), 2)
+                bytes_to_gigabytes(tx_bytes_per_second), 2)
             network_usage[interface]["rx_Bps"] = rx_bytes_per_second
             network_usage[interface]["rx_KBps"] = rx_kilobytes_per_second
             network_usage[interface]["rx_MBps"] = rx_mega_bytes_per_second
@@ -197,17 +176,17 @@ class NetworkInfo:
             network_usage["total"]["tx_Bps"] += tx_bytes_per_second
 
         network_usage["total"]["rx_KBps"] = round(
-            bytes_to_kilobytes_per_second(network_usage["total"]["rx_Bps"]), 2)
+            bytes_to_kilobytes(network_usage["total"]["rx_Bps"]), 2)
         network_usage["total"]["rx_MBps"] = round(
-            bytes_to_megabytes_per_second(network_usage["total"]["rx_Bps"]), 2)
+            bytes_to_megabytes(network_usage["total"]["rx_Bps"]), 2)
         network_usage["total"]["rx_GBps"] = round(
-            bytes_to_gigabytes_per_second(network_usage["total"]["rx_Bps"]), 2)
+            bytes_to_gigabytes(network_usage["total"]["rx_Bps"]), 2)
         network_usage["total"]["tx_KBps"] = round(
-            bytes_to_kilobytes_per_second(network_usage["total"]["tx_Bps"]), 2)
+            bytes_to_kilobytes(network_usage["total"]["tx_Bps"]), 2)
         network_usage["total"]["tx_MBps"] = round(
-            bytes_to_megabytes_per_second(network_usage["total"]["tx_Bps"]), 2)
+            bytes_to_megabytes(network_usage["total"]["tx_Bps"]), 2)
         network_usage["total"]["tx_GBps"] = round(
-            bytes_to_gigabytes_per_second(network_usage["total"]["tx_Bps"]), 2)
+            bytes_to_gigabytes(network_usage["total"]["tx_Bps"]), 2)
 
         self.previous_stat_data = current_network_data
         self.previous_timestamp = current_timestamp

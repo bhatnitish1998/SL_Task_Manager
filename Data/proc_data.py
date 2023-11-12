@@ -2,6 +2,7 @@ import os
 import datetime
 import pwd
 
+
 class ProcessInfo:
     '''
     Class to parse proc file and gather stats about the processes
@@ -20,33 +21,34 @@ class ProcessInfo:
         self.proc_path = '/proc'
         self.pid = pid
         self.user = self.get_process_user()
-        self.stat_fd = open(os.path.join(self.proc_path, str(self.pid), 'stat'), 'r')
+        self.stat_fd = open(os.path.join(
+            self.proc_path, str(self.pid), 'stat'), 'r')
         self.update_stats()
 
     def update_stats(self,):
         self.stat_fd.seek(0)
         self.stat_raw = self.stat_fd.read()
-    
+
     def get_stats(self):
         return self.stat_raw
-    
+
     def get_process_user(self):
         try:
             # Get the stat information of the process directory
             stat = os.stat(f"/proc/{self.pid}")
-            
+
             # Get the user ID and group ID of the owner
             uid = stat.st_uid
             gid = stat.st_gid
-            
+
             # Look up the username and group name using the user and group IDs
             username = pwd.getpwuid(uid).pw_name
             # groupname = os.getgrgid(gid).gr_name
-            
+
             return username
         except (FileNotFoundError, KeyError):
             return None
-    
+
     @property
     def name(self):
         stat_data = self.get_stats()
@@ -80,7 +82,8 @@ class ProcessInfo:
         statm_path = os.path.join(self.proc_path, str(self.pid), 'statm')
         with open(statm_path, 'r') as statm_file:
             statm_info = statm_file.read().split()
-            resident_set_size = int(statm_info[1]) * os.sysconf(os.sysconf_names['SC_PAGE_SIZE']) / (1024 * 1024)  # in MB
+            resident_set_size = int(
+                statm_info[1]) * os.sysconf(os.sysconf_names['SC_PAGE_SIZE']) / (1024 * 1024)  # in MB
             return round(resident_set_size, 2)
 
     @property
@@ -104,9 +107,10 @@ class ProcessInfo:
         starttime = int(stat_data.split(" ")[21])
         hertz = os.sysconf(os.sysconf_names['SC_CLK_TCK'])
         uptime = self.get_uptime()
-        start_time_seconds = datetime.datetime.now().timestamp() - (uptime - starttime/hertz)
+        start_time_seconds = datetime.datetime.now().timestamp() - \
+            (uptime - starttime/hertz)
         return start_time_seconds
-    
+
     def get_data(self):
         try:
             self.update_stats()
@@ -114,7 +118,7 @@ class ProcessInfo:
             return None
         except ProcessLookupError:
             return None
-        
+
         return [
             self.user,
             self.pid,
@@ -128,7 +132,7 @@ class ProcessInfo:
         ]
 
     def __del__(self):
-        print(f"Deleting processInfo obj {self.pid}")
+        # print(f"Deleting processInfo obj {self.pid}")
         try:
             self.stat_fd.close()
         except FileNotFoundError:
@@ -161,6 +165,7 @@ class ProcessesData:
     '''
     Class to parse proc file and gather stats about the processes
     '''
+
     def __init__(self) -> None:
         self.proc_path = '/proc'
         self.cache = {}
@@ -182,11 +187,11 @@ class ProcessesData:
                 except FileNotFoundError:
                     pass
         return new_cache
-    
+
     def get_processes(self):
         self.cache = self._get_process_info()
         return [process for process in self.cache.values()]
-    
+
     def get_data(self):
         self.processes = self.get_processes()
         data = [process.get_data() for process in self.processes]
