@@ -1,5 +1,5 @@
 import subprocess
-
+from Data.utility_functions import kb_to_print
 # all attributes are in kb right now
 class MemoryInfo:
     def __init__(self):
@@ -41,15 +41,7 @@ class DiskInfo:
         self.disk_data = {}
         self.fs_data =[]
 
-    def kb_to_print(self,value):
-        result = f"{value:.2f} KB"
-        if value > 1024:
-            value = value / 1024
-            result = f"{value:.2f} MB"
-        if value > 1024:
-            value = value / 1024
-            result = f"{value:.2f} GB"
-        return result
+
 
     def get_meta_info(self):
         result = subprocess.run(["lsblk | grep disk"], shell=True, capture_output=True, text=True).stdout.strip().split(
@@ -66,8 +58,8 @@ class DiskInfo:
         for line in result:
             row = line.split()
             if(row[0] != 'tmpfs'):
-                used = self.kb_to_print(int(row[2]))
-                available = self.kb_to_print(int(row[3]))
+                used = kb_to_print(int(row[2]))
+                available = kb_to_print(int(row[3]))
                 # used = f'{int(row[2])/(1024*1024):.2f} GB'
                 # available = f'{int(row[3])/(1024*1024):.2f} GB'
                 self.fs_data.append([row[0],used,available,row[4][:-1]])

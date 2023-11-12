@@ -1,4 +1,5 @@
 from PyQt6.QtCore import QTimer
+
 from PyQt6.QtGui import QIcon, QFont
 import pyqtgraph as pg
 from PyQt6.QtWidgets import QWidget, QApplication, QTableWidgetItem, QLabel, QProgressBar, QHeaderView, QHBoxLayout, \
@@ -35,6 +36,13 @@ class TaskManagerWindow(QWidget, Ui_main_window):
         self.cpu_timer.timeout.connect(self.update_cpu_info)
         self.cpu_timer.start()
 
+        # set network timer
+        self.network_interval = 1000
+        self.network_timer = QTimer()
+        self.network_timer.setInterval(self.network_interval)
+        self.network_timer.timeout.connect(self.update_network_info)
+        self.network_timer.start()
+
         # set memory timer for update
         self.mem_interval = 500
         self.mem_timer = QTimer()
@@ -57,6 +65,13 @@ class TaskManagerWindow(QWidget, Ui_main_window):
         memory = MemoryInfo()
         data = memory.get_memory_usage()
         self.mem_usage_graph.setYRange(0, data["total"] / (1024 * 1024))
+
+        # add mem pie-chart
+        # self.mem_pie_chart = QPieSeries()
+        # self.swap_pie_chart = QPieSeries()
+        # self.vbox_memory.addWidget(self.mem_pie_chart)
+        # self.vbox_swap.addWidget(self.swap_pie_chart)
+
 
         # core graph
         self.core_graph = pg.PlotWidget()
@@ -90,7 +105,6 @@ class TaskManagerWindow(QWidget, Ui_main_window):
             label_disk_iter.setText(disk_str)
             label_disk_iter.setFont(QFont("Ubuntu", 15))
             self.hbox_disk_info.addWidget(label_disk_iter)
-
 
         # add filesystem info
         # self.vbox_file_system.addWidget()
@@ -182,6 +196,10 @@ class TaskManagerWindow(QWidget, Ui_main_window):
         self.mem_graph_y.pop(0)
         self.mem_graph_y.append(used)
         self.mem_line.setData(self.mem_graph_x, self.mem_graph_y)
+
+    def update_network_info(self):
+        pass
+
 
     def end_task(self):
         current = self.table_processes.currentRow()
