@@ -1,6 +1,8 @@
+import os
 import time
 import json
 import datetime
+from Data.utility import kb_to_print
 
 
 def bytes_to_kilobytes_per_second(bytes_per_second: float) -> float:
@@ -107,6 +109,47 @@ class NetworkInfo:
         # print(json.dumps(network_data, indent=2))
         return network_data
 
+    def _get_network_info(self):
+        network_info = []
+
+        for interface in self.previous_stat_data.keys():
+            # parts = line.split(":")
+            # interface = parts[0].strip()
+            interface_data = {"interface": interface,
+                              "addresses": []}
+
+            # Get IP addresses and MAC addresses for each interface
+            try:
+                iface_info = os.popen(f"ip addr show {interface}").read()
+                for line in iface_info.split('\n'):
+                    if 'inet' in line:
+                        ip_address = line.split(' ')[5]
+                        netmask = line.split('/')[1]
+                        interface_data["addresses"].append(
+                            {"ip_address": ip_address, "netmask": netmask})
+                    elif 'link/ether' in line:
+                        mac_address = line.strip().split(' ')[1]
+                        interface_data["mac_address"] = mac_address
+            except FileNotFoundError:
+                pass  # Handle exception if 'ip' command is not available
+
+            network_info.append(interface_data)
+
+        network_usage = self.get_network_usage()
+        network_info_formatted = []
+        for interface_info in network_info:
+            interface = interface_info["interface"]
+            info = interface_info
+            network_info_formatted.append([
+                interface,
+                info["addresses"][0]["ip_address"] if len(
+                    info["addresses"]) else "",
+                info["mac_address"] if "mac_address" in info else "",
+                kb_to_print(network_usage[interface]["rx_KBps"]),
+                kb_to_print(network_usage[interface]["tx_KBps"]),
+            ])
+        return network_info_formatted
+
     def get_network_usage(self):
         current_network_data = self._parse_stat_data()
         current_timestamp = datetime.datetime.now()
@@ -173,13 +216,18 @@ class NetworkInfo:
     def get_interfaces(self):
         return self._parse_stat_data().keys()
 
+    @property
+    def network_info(self):
+        return self._get_network_info()
+
     def __del__(self):
         self.stat_fd.close()
 
 
 if __name__ == "__main__":
-    net = NetworkInfo(exclude_interfaces=[
-                      "lo", "docker0", "veth9bf4f4f", "docker_gwbridge"])
+    net = NetworkInfo(exclude_interfaces=[])
+    print(json.dumps(net.network_info, indent=2))
+    exit()
     while True:
         time.sleep(1)
         print(json.dumps(net.get_network_usage(), indent=2))
