@@ -74,20 +74,10 @@ class MemoryTab(TaskManagerWindow):
 
         # update memory label use %
         used = data["used"] / div_factor
-        total = data["total"] / div_factor
-        used_percent = (used / total) * 100
-        mem_string = f"{used:2.2f} GB ({used_percent:2.1f}%) of {total:2.2f} GB"
-        self.label_mem_usage.setText(mem_string)
+        self.label_mem_usage.setText(data["mem_string"])
 
         # update swap label use %
-        s_total = data["s_total"] / div_factor
-        if s_total != 0:
-            s_used = data["s_used"] / div_factor
-            s_used_percent = (s_used / s_total) * 100
-            swap_string = f"{s_used:2.2f} GB ({s_used_percent:2.1f}%) of {s_total:2.2f} GB"
-        else:
-            swap_string = "Unavailable"
-        self.label_swap_usage.setText(swap_string)
+        self.label_swap_usage.setText(data["swap_string"])
 
         # update graph
         self.mem_graph_x.pop(0)
