@@ -23,6 +23,9 @@ class ProcessInfo:
         self.user = self.get_process_user()
         self.stat_fd = open(os.path.join(
             self.proc_path, str(self.pid), 'stat'), 'r')
+
+        self.hertz = os.sysconf(os.sysconf_names['SC_CLK_TCK'])
+
         self.update_stats()
 
     def update_stats(self,):
@@ -67,14 +70,14 @@ class ProcessInfo:
     @property
     def cpu_usage(self):
         stat_data = self.get_stats()
-        utime = int(stat_data.split(" ")[13])
-        stime = int(stat_data.split(" ")[14])
-        starttime = int(stat_data.split(" ")[21])
-        hertz = os.sysconf(os.sysconf_names['SC_CLK_TCK'])
-        total_time = utime + stime
-        uptime = os.sysconf(os.sysconf_names['SC_CLK_TCK']) * self.get_uptime()
-        seconds = uptime - (starttime / hertz)
-        cpu_usage = 100.0 * ((total_time / hertz) / seconds)
+        utime = int(stat_data.split(" ")[13])/self.hertz
+        stime = int(stat_data.split(" ")[14])/self.hertz
+        starttime = int(stat_data.split(" ")[21])/self.hertz
+        proc_time = utime + stime
+        elapsed_time = self._get_uptime() - starttime
+        if elapsed_time == 0:
+            return 0
+        cpu_usage = 100.0 * (proc_time / elapsed_time)
         return round(cpu_usage, 2)
 
     @property
@@ -89,15 +92,15 @@ class ProcessInfo:
     @property
     def start_time(self):
         starttime = int(self.get_process_start_time())
-        return datetime.datetime.fromtimestamp(starttime)
+        return datetime.datetime.fromtimestamp(starttime).strftime("%H:%M:%S")
 
     @property
     def running_time(self):
         start_time = self.get_process_start_time()
         now = datetime.datetime.now().timestamp()
-        return round(now - start_time, 2)
+        return int(now - start_time)
 
-    def get_uptime(self):
+    def _get_uptime(self):
         with open(os.path.join(self.proc_path, 'uptime')) as uptime_file:
             uptime = float(uptime_file.read().split()[0])
             return uptime
@@ -105,8 +108,8 @@ class ProcessInfo:
     def get_process_start_time(self):
         stat_data = self.get_stats()
         starttime = int(stat_data.split(" ")[21])
-        hertz = os.sysconf(os.sysconf_names['SC_CLK_TCK'])
-        uptime = self.get_uptime()
+        hertz = self.hertz
+        uptime = self._get_uptime()
         start_time_seconds = datetime.datetime.now().timestamp() - \
             (uptime - starttime/hertz)
         return start_time_seconds
