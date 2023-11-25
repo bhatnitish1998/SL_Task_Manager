@@ -2,6 +2,21 @@ from PyQt6.QtWidgets import QWidget, QApplication, QTableWidgetItem, QLabel, QPr
 from PyQt6.QtCore import QTimer
 
 from setup_ui import TaskManagerWindow
+
+class NumericTableWidgetItem(QTableWidgetItem):
+    def __init__(self, value):
+        super().__init__(str(value))
+
+    def __lt__(self, other):
+        # Custom comparison for numerical values
+        try:
+            return float(self.text()) > float(other.text())
+
+        except ValueError:
+            return super().__lt__(other)
+
+
+
 class ProcessTab(TaskManagerWindow):
     def __init__(self):
         super().__init__()
@@ -29,7 +44,12 @@ class ProcessTab(TaskManagerWindow):
 
         for row in range(n_row):
             for column in range(n_col):
-                my_item = QTableWidgetItem(str(data[row][column]))
+                value = data[row][column]
+                if isinstance(value, (int, float)):
+                    my_item = NumericTableWidgetItem(value)
+                else:
+                    my_item = QTableWidgetItem(str(value))
+
                 my_item.setTextAlignment(4)
                 self.table_processes.setItem(row, column, my_item)
 

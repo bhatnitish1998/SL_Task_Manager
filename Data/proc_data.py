@@ -19,7 +19,7 @@ class ProcessInfo:
 
     def __init__(self, pid) -> None:
         self.proc_path = '/proc'
-        self.pid = pid
+        self.pid = int(pid)
         self.user = self.get_process_user()
         self.stat_fd = open(os.path.join(
             self.proc_path, str(self.pid), 'stat'), 'r')
