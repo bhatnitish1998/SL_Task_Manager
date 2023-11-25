@@ -52,17 +52,29 @@ class Report:
 
         self.max_samples = math.ceil(period/interval)
 
-        self.get_static_data()
+        self._get_static_data()
         # self.time = threading.Timer(interval, self.add_data).start()
-        self.timer = QTimer()
-        self.timer.setInterval(interval*1000)
-        self.timer.timeout.connect(self.add_data)
-        self.timer.start()
+        self.timers = []
+        self._timer(interval, self._add_data)
+        self._timer(interval+5, self.save_csv)
 
-    def get_static_data(self):
+    def _timer(self, interval, fn):
+        """
+        Helper function to create a timer
+        Args:
+            interval (int): interval in seconds
+            fn (function): function to be called
+        """
+        new_timers = QTimer()
+        new_timers.setInterval(interval*1000)
+        new_timers.timeout.connect(fn)
+        new_timers.start()
+        self.timers.append(new_timers)
+
+    def _get_static_data(self):
         self.data["cpu_info"] = self.system_info.cpu_meta
 
-    def add_data(self):
+    def _add_data(self):
         timestamp = time.time()
         cpu_usage = self.system_info.get_cpu_data()
         ram_usage = self.system_info.get_mem_data()
@@ -73,12 +85,19 @@ class Report:
     def generate_report(self):
         pass
 
-    def save_csv(self):
+    def save_csv(self, csv_file: str = None):
+        """
+        Save data to csv file
+        Args:
+            csv_file (str, optional): csv file path. Defaults to ./reports.csv.
+        """
+        if not csv_file:
+            csv_file = self.csv_file
         lines = ["timestamp, cpu_usage, ram_usage, network_usage\n"]
         for data in self.data["stats"]:
             lines.append(
                 f"{data.timestamp}, {data.cpu_usage}, {data.ram_usage}\n")
-        with open(self.csv_file, "w") as f:
+        with open(csv_file, "w") as f:
             f.writelines(lines)
 
 
