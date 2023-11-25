@@ -1,7 +1,9 @@
-import pyqtgraph as pg
 from PyQt6.QtCore import QTimer
+import pyqtgraph as pg
 
 from setup_ui import TaskManagerWindow
+
+
 class CPUTab(TaskManagerWindow):
     def __init__(self):
         super().__init__()
@@ -20,7 +22,6 @@ class CPUTab(TaskManagerWindow):
         # core graph
         self.core_graph = pg.PlotWidget()
         self.hbox_core_graph.addWidget(self.core_graph)
-
         self.core_x = [i for i in range(self.number_of_cores)]
         self.core_y = [0] * self.number_of_cores
         self.bar_graph = pg.BarGraphItem(x=self.core_x, height=self.core_y, width=0.5, brush='g')
@@ -28,6 +29,7 @@ class CPUTab(TaskManagerWindow):
         self.core_graph.setYRange(0, 100)
         self.core_graph.setLabel('left', "Utilization % ")
         self.core_graph.setLabel('bottom', "CPU Cores")
+        self.core_graph.setMouseEnabled(x=False, y=False)
 
         # overall cpu graph
         self.cpu_overall_graph = pg.PlotWidget()
@@ -36,9 +38,10 @@ class CPUTab(TaskManagerWindow):
         self.cpu_overall_graph.setLabel('bottom', "Time in seconds")
         self.cpu_overall_graph.setYRange(0, 100)
         self.cpu_graph_x = [i / 1000 for i in range(-50 * self.cpu_interval, 1, self.cpu_interval)]
-        self.cpu_graph_y = [0 for i in range(51)]
+        self.cpu_graph_y = [0 for _ in range(51)]
         pen = pg.mkPen(color=(0, 255, 0), width=5)
         self.cpu_line = self.cpu_overall_graph.plot(self.cpu_graph_x, self.cpu_graph_y, pen=pen)
+        self.cpu_overall_graph.setMouseEnabled(x=False, y=False)
 
     def update_cpu_info(self):
         data = self.system_info.get_cpu_data()

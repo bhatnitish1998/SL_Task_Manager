@@ -1,10 +1,11 @@
+from PyQt6.QtWidgets import QLabel, QProgressBar, QVBoxLayout
+from PyQt6.QtCore import QTimer
+from PyQt6.QtGui import QFont
 import pyqtgraph as pg
 
-from PyQt6.QtWidgets import  QLabel, QProgressBar, QVBoxLayout
-from PyQt6.QtCore import QTimer
-from PyQt6.QtGui import QIcon, QFont
-
 from setup_ui import TaskManagerWindow
+
+
 class MemoryTab(TaskManagerWindow):
     def __init__(self):
         super().__init__()
@@ -20,13 +21,14 @@ class MemoryTab(TaskManagerWindow):
         self.mem_usage_graph = pg.PlotWidget()
         self.hbox_mem_graph.addWidget(self.mem_usage_graph)
         self.mem_graph_x = [i / 1000 for i in range(-50 * self.mem_interval, 1, self.mem_interval)]
-        self.mem_graph_y = [0 for i in range(51)]
+        self.mem_graph_y = [0 for _ in range(51)]
         pen = pg.mkPen(color=(0, 255, 0), width=5)
         self.mem_line = self.mem_usage_graph.plot(self.mem_graph_x, self.mem_graph_y, pen=pen)
         self.mem_usage_graph.setLabel('left', "Memory Used (GB)")
         self.mem_usage_graph.setLabel('bottom', "Time elapsed (seconds)")
         data = self.system_info.get_mem_data()
         self.mem_usage_graph.setYRange(0, data["total"] / (1024 * 1024))
+        self.mem_usage_graph.setMouseEnabled(x=False, y=False)
 
         # add  diskinfo
         data = self.system_info.get_disk_data()
@@ -38,7 +40,6 @@ class MemoryTab(TaskManagerWindow):
             self.hbox_disk_info.addWidget(label_disk_iter)
 
         # add filesystem info
-        # self.vbox_file_system.addWidget()
         data = self.system_info.fs_info
         cols = ["File-system", "Used", "Available", "Percent Used"]
         vbox_t = []
@@ -68,18 +69,17 @@ class MemoryTab(TaskManagerWindow):
             self.hbox_file_system.addLayout(vbox_t[i])
 
     def update_memory_info(self):
-        # {total,available,used,free,s_total,s_used,s_free}
         data = self.system_info.get_mem_data()
         div_factor = 1024 * 1024
 
-        # update memory label
+        # update memory label use %
         used = data["used"] / div_factor
         total = data["total"] / div_factor
         used_percent = (used / total) * 100
         mem_string = f"{used:2.2f} GB ({used_percent:2.1f}%) of {total:2.2f} GB"
         self.label_mem_usage.setText(mem_string)
 
-        # update swap label
+        # update swap label use %
         s_total = data["s_total"] / div_factor
         if s_total != 0:
             s_used = data["s_used"] / div_factor

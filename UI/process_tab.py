@@ -1,9 +1,16 @@
-from PyQt6.QtWidgets import QWidget, QApplication, QTableWidgetItem, QLabel, QProgressBar, QVBoxLayout
+from PyQt6.QtWidgets import QTableWidgetItem, QMessageBox
 from PyQt6.QtCore import QTimer
+
+import subprocess
 
 from setup_ui import TaskManagerWindow
 
+
 class NumericTableWidgetItem(QTableWidgetItem):
+    """
+    To hold int and float data of table cell for custom sorting
+    """
+
     def __init__(self, value):
         super().__init__(str(value))
 
@@ -14,7 +21,6 @@ class NumericTableWidgetItem(QTableWidgetItem):
 
         except ValueError:
             return super().__lt__(other)
-
 
 
 class ProcessTab(TaskManagerWindow):
@@ -31,8 +37,14 @@ class ProcessTab(TaskManagerWindow):
         self.button_endtask.clicked.connect(self.end_task)
 
     def end_task(self):
-        current = self.table_processes.currentRow()
-        print(current)
+        selected_row = self.table_processes.selectedItems()[0].row()
+        selected_item = self.table_processes.item(selected_row, 1)
+        pid = selected_item.text()
+        result = subprocess.run(["kill", pid])
+        if result.returncode == 0:
+            QMessageBox.information(self, "Success", "Process terminated successfully")
+        else:
+            QMessageBox.warning(self, "Permission Denied", "You do not have required permissions for this task")
 
     def update_process_table(self):
         # gets list of lists of all processes
@@ -42,6 +54,7 @@ class ProcessTab(TaskManagerWindow):
         self.table_processes.setRowCount(n_row)
         self.table_processes.setColumnCount(n_col)
 
+        # update individual cell of table
         for row in range(n_row):
             for column in range(n_col):
                 value = data[row][column]
@@ -52,4 +65,3 @@ class ProcessTab(TaskManagerWindow):
 
                 my_item.setTextAlignment(4)
                 self.table_processes.setItem(row, column, my_item)
-

@@ -1,4 +1,3 @@
-
 import pyqtgraph as pg
 from PyQt6.QtWidgets import QLabel, QVBoxLayout
 from PyQt6.QtCore import QTimer
@@ -28,6 +27,7 @@ class NetWorkTab(TaskManagerWindow):
         self.network_transmit_y = [0 for i in range(51)]
         self.network_transmit_line = self.network_transmit_graph.plot(self.network_transmit_x, self.network_transmit_y,
                                                                       pen=pen)
+        self.network_transmit_graph.setMouseEnabled(x=False, y=False)
 
         # network receive graph
         self.network_receive_graph = pg.PlotWidget()
@@ -39,12 +39,15 @@ class NetWorkTab(TaskManagerWindow):
         self.network_receive_y = [0 for i in range(51)]
         self.network_receive_line = self.network_receive_graph.plot(self.network_receive_x, self.network_receive_y,
                                                                     pen=pen)
+        self.network_receive_graph.setMouseEnabled(x=False, y=False)
 
         # add interface info
         nw = NetworkInfo()
         data = nw.network_info
         cols = ["Interface", "IP", "MAC", "Send", "Receive"]
         vbox_t = []
+
+        # set columns
         for i in range(len(cols)):
             vbox_t.append(QVBoxLayout())
             label = QLabel()
@@ -54,6 +57,7 @@ class NetWorkTab(TaskManagerWindow):
             label.setFont(font)
             vbox_t[i].addWidget(label)
 
+        # populate the data
         self.send_labels = []
         self.receive_labels = []
         for row in data:
