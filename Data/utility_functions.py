@@ -9,6 +9,13 @@ def kb_to_print(value):
     return result
 
 
+def b_to_print(value):
+    result = f"{value:.2f} B"
+    if value > 1024:
+        return kb_to_print(round(value/1024))
+    return result
+
+
 def bytes_to_kilobytes(bytes_val: float) -> float:
     """
     Converts a number of bytes per second to kilobytes per second.

@@ -1,6 +1,5 @@
 # This file contains the CPUInfo class that provides information about CPU usage.
 import os
-import time
 
 
 class CPUInfo:
@@ -66,6 +65,15 @@ class CPUInfo:
         return len(self.prev_cpu_stats.keys()) - 1
 
     def get_cpu_usage(self):
+        """
+        Returns a dictionary with the CPU usage percentage for each CPU and total CPU usage eg.
+        {
+            'cpu': {'usage': ..},
+            'cpu0': {'usage': ..},
+            'cpu1': {'usage': ..},
+            ......
+        }
+        """
         current_cpu_stats = self._read_cpu_stats()
         cpu_usage = {}
         for item in current_cpu_stats.items():
@@ -118,15 +126,3 @@ class CPUInfo:
         cpu_meta['max_cpu_freq'] = f'MAX CPU Frequency : {float(self.cpu_meta_raw["CPU max MHz"])/1000} GHz'
 
         return cpu_meta
-
-
-if __name__ == "__main__":
-    cpu_info = CPUInfo()
-    print(cpu_info.cpu_meta)
-    # while True:
-    #     time.sleep(1)  # Wait for a while to measure the change in CPU usage
-    #     cpu_usage = cpu_info.get_cpu_usage()
-
-    #     print("CPU Usage:")
-    #     for cpu_core, cpu_usage in cpu_usage.items():
-    #         print(f'{cpu_core}: {cpu_usage["usage"]}%')
