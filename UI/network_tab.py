@@ -9,6 +9,8 @@ class NetWorkTab(TaskManagerWindow):
     def __init__(self):
         super().__init__()
 
+        # get network info
+        self.nw = NetworkInfo()
         # set network update timer
         self.network_interval = 500
         self.network_timer = QTimer()
@@ -42,8 +44,7 @@ class NetWorkTab(TaskManagerWindow):
         self.network_receive_graph.setMouseEnabled(x=False, y=False)
 
         # add interface info
-        nw = NetworkInfo()
-        data = nw.network_info
+        data = self.nw.network_info
         cols = ["Interface", "IP", "MAC", "Send", "Receive"]
         vbox_t = []
 
@@ -92,8 +93,7 @@ class NetWorkTab(TaskManagerWindow):
         self.network_receive_line.setData(self.network_receive_x, self.network_receive_y)
 
     def update_interface_info(self):
-        nw = NetworkInfo()
-        data = nw.network_info
+        data = self.nw.network_info
         for i in range(len(data)):
             for j in [3, 4]:
                 if j == 3:

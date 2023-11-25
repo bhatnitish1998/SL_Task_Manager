@@ -201,12 +201,3 @@ class NetworkInfo:
 
     def __del__(self):
         self.stat_fd.close()
-
-
-if __name__ == "__main__":
-    net = NetworkInfo(exclude_interfaces=[])
-    print(json.dumps(net.network_info, indent=2))
-    exit()
-    while True:
-        time.sleep(1)
-        print(json.dumps(net.get_network_usage(), indent=2))
