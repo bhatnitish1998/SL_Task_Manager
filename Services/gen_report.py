@@ -131,11 +131,19 @@ class ReportTemplate:
         with open(f"{self.path}/graph.tex", "w") as f:
             f.writelines(output)
 
-    def render(self):
-        # self.do_plots()
+    def gen_pdf(self, output: str):
+        os.system(
+            f"ls -l && echo $PYTHONPATH && cp $PYTHONPATH/Services/Template/* {self.path}/")
+        os.system(
+            f"cd {self.path} && pdflatex main.tex && cp main.pdf $PYTHONPATH/{output}")
+
+    def prepare_render(self):
         self.render_static_data()
         self.render_log_data()
         self.render_plots()
+
+    def render(self, output: str = "report.pdf"):
+        self.gen_pdf(output=output)
 
 
 class ReportData:
@@ -154,7 +162,7 @@ class Report:
     def __init__(self,
                  interval: int = 10,
                  period: int = 15*60,
-                 csv_file: str = "report.csv"
+                 csv_file: str = "./report.pdf"
                  ) -> None:
         self.system_info = SystemInfo()
 
@@ -171,6 +179,8 @@ class Report:
         self._get_static_data()
         # self.time = threading.Timer(interval, self.add_data).start()
         self.timers = []
+        self.report_template = ReportTemplate(
+            self.data, "/tmp/taskmanager/report")
         self._timer(interval, self._add_data)
         self._timer(period, self.generate_report)
 
@@ -200,8 +210,8 @@ class Report:
         self.data["stats"] = self.data["stats"]
 
     def generate_report(self):
-        report_template = ReportTemplate(self.data, "./report")
-        report_template.render()
+        self.report_template.prepare_render()
+        # self.report_template.render(output=self.csv_file)
 
     def save_csv(self, csv_file: str = None):
         """
@@ -217,6 +227,12 @@ class Report:
                 f"{data.timestamp}, {data.cpu_usage}, {data.ram_usage}\n")
         with open(csv_file, "w") as f:
             f.writelines(lines)
+
+    def __del__(self):
+        self.report_template.render(output=self.csv_file)
+
+        for timer in self.timers:
+            timer.stop()
 
 
 if __name__ == "__main__":
