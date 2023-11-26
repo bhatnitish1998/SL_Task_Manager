@@ -90,7 +90,6 @@ class ProcessTab(TaskManagerWindow):
 
     def notify(self, row):
         pid = row[1]
-
         self.threshold_breach[pid] += 1
         if self.threshold_breach[pid] == 5:
             self.threshold_breach[pid] = 0

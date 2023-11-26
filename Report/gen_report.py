@@ -1,5 +1,6 @@
 import math
 import time
+import subprocess
 import os
 from PyQt6.QtCore import QTimer
 from typing import List, Dict, Any, Union
@@ -132,10 +133,7 @@ class ReportTemplate:
             f.writelines(output)
 
     def gen_pdf(self, output: str):
-        os.system(
-            f"ls -l && echo $PYTHONPATH && cp $PYTHONPATH/Services/Template/* {self.path}/")
-        os.system(
-            f"cd {self.path} && pdflatex main.tex && cp main.pdf $PYTHONPATH/{output}")
+        subprocess.run ("cd ../Report && pdflatex main.tex 2> /dev/null",shell=True)
 
     def prepare_render(self):
         self.render_static_data()
@@ -180,7 +178,7 @@ class Report:
         # self.time = threading.Timer(interval, self.add_data).start()
         self.timers = []
         self.report_template = ReportTemplate(
-            self.data, "/tmp/taskmanager/report")
+            self.data, "../Report/")
         self._timer(interval, self._add_data)
         self._timer(period, self.generate_report)
 
@@ -231,15 +229,3 @@ class Report:
     def __del__(self):
         self.report_template.render(output=self.csv_file)
 
-        for timer in self.timers:
-            timer.stop()
-
-
-if __name__ == "__main__":
-    report = Report(interval=1, period=10)
-    k = 0
-    while k <= 100:
-        time.sleep(1)
-        k = k+1
-    report.save_csv()
-    # report.generate_report()

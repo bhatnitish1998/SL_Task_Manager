@@ -1,7 +1,11 @@
+*.aux
+*.png
+
 docs
 venv/
 **/__pycache__/
 .vscode/
 report.csv
+/Report/
 report/
 Report/
