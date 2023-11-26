@@ -133,7 +133,8 @@ class ReportTemplate:
             f.writelines(output)
 
     def gen_pdf(self, output: str):
-        subprocess.run ("cd ../Report && pdflatex main.tex 2> /dev/null",shell=True)
+        subprocess.run(
+            "cd Report && pdflatex main.tex > /dev/null", shell=True)
 
     def prepare_render(self):
         self.render_static_data()
@@ -178,7 +179,7 @@ class Report:
         # self.time = threading.Timer(interval, self.add_data).start()
         self.timers = []
         self.report_template = ReportTemplate(
-            self.data, "../Report/")
+            self.data, "Report/")
         self._timer(interval, self._add_data)
         self._timer(period, self.generate_report)
 
@@ -228,4 +229,3 @@ class Report:
 
     def __del__(self):
         self.report_template.render(output=self.csv_file)
-

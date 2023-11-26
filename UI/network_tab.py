@@ -1,10 +1,12 @@
 import pyqtgraph as pg
 from PyQt6.QtWidgets import QLabel, QVBoxLayout
 from PyQt6.QtCore import QTimer
-from PyQt6.QtGui import  QFont
+from PyQt6.QtGui import QFont
 from Data.network_data import NetworkInfo
 
-from setup_ui import TaskManagerWindow
+from .setup_ui import TaskManagerWindow
+
+
 class NetWorkTab(TaskManagerWindow):
     def __init__(self):
         super().__init__()
@@ -25,7 +27,8 @@ class NetWorkTab(TaskManagerWindow):
         self.network_transmit_graph.setLabel('left', "Transmit rate (KBps)")
         self.network_transmit_graph.setLabel('bottom', "Time in seconds")
         pen = pg.mkPen(color=(0, 255, 0), width=5)
-        self.network_transmit_x = [i / 1000 for i in range(-50 * self.network_interval, 1, self.network_interval)]
+        self.network_transmit_x = [
+            i / 1000 for i in range(-50 * self.network_interval, 1, self.network_interval)]
         self.network_transmit_y = [0 for i in range(51)]
         self.network_transmit_line = self.network_transmit_graph.plot(self.network_transmit_x, self.network_transmit_y,
                                                                       pen=pen)
@@ -37,7 +40,8 @@ class NetWorkTab(TaskManagerWindow):
         self.network_receive_graph.setLabel('left', "Receive rate (KBps)")
         self.network_receive_graph.setLabel('bottom', "Time in seconds")
         pen = pg.mkPen(color=(0, 255, 0), width=5)
-        self.network_receive_x = [i / 1000 for i in range(-50 * self.network_interval, 1, self.network_interval)]
+        self.network_receive_x = [
+            i / 1000 for i in range(-50 * self.network_interval, 1, self.network_interval)]
         self.network_receive_y = [0 for i in range(51)]
         self.network_receive_line = self.network_receive_graph.plot(self.network_receive_x, self.network_receive_y,
                                                                     pen=pen)
@@ -80,17 +84,21 @@ class NetWorkTab(TaskManagerWindow):
         transmit = data['total']['tx_KBps']
         receive = data['total']['rx_KBps']
         self.network_transmit_x.pop(0)
-        self.network_transmit_x.append(self.network_transmit_x[-1] + (self.network_interval / 1000))
+        self.network_transmit_x.append(
+            self.network_transmit_x[-1] + (self.network_interval / 1000))
         self.network_transmit_y.pop(0)
         self.network_transmit_y.append(transmit)
-        self.network_transmit_line.setData(self.network_transmit_x, self.network_transmit_y)
+        self.network_transmit_line.setData(
+            self.network_transmit_x, self.network_transmit_y)
 
         # update receive graph
         self.network_receive_x.pop(0)
-        self.network_receive_x.append(self.network_receive_x[-1] + (self.network_interval / 1000))
+        self.network_receive_x.append(
+            self.network_receive_x[-1] + (self.network_interval / 1000))
         self.network_receive_y.pop(0)
         self.network_receive_y.append(receive)
-        self.network_receive_line.setData(self.network_receive_x, self.network_receive_y)
+        self.network_receive_line.setData(
+            self.network_receive_x, self.network_receive_y)
 
     def update_interface_info(self):
         data = self.nw.network_info

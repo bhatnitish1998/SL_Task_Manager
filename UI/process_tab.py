@@ -4,7 +4,7 @@ from PyQt6.QtCore import QTimer
 import subprocess
 from collections import defaultdict
 
-from setup_ui import TaskManagerWindow
+from .setup_ui import TaskManagerWindow
 
 
 class NumericTableWidgetItem(QTableWidgetItem):
@@ -58,9 +58,11 @@ class ProcessTab(TaskManagerWindow):
         pid = selected_item.text()
         result = subprocess.run(["kill", pid])
         if result.returncode == 0:
-            QMessageBox.information(self, "Success", "Process terminated successfully")
+            QMessageBox.information(
+                self, "Success", "Process terminated successfully")
         else:
-            QMessageBox.warning(self, "Permission Denied", "You do not have required permissions for this task")
+            QMessageBox.warning(
+                self, "Permission Denied", "You do not have required permissions for this task")
 
     def update_process_table(self):
         # gets list of lists of all processes

@@ -3,7 +3,7 @@ from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QFont
 import pyqtgraph as pg
 
-from setup_ui import TaskManagerWindow
+from .setup_ui import TaskManagerWindow
 
 
 class MemoryTab(TaskManagerWindow):
@@ -20,10 +20,12 @@ class MemoryTab(TaskManagerWindow):
         # memory graph
         self.mem_usage_graph = pg.PlotWidget()
         self.hbox_mem_graph.addWidget(self.mem_usage_graph)
-        self.mem_graph_x = [i / 1000 for i in range(-50 * self.mem_interval, 1, self.mem_interval)]
+        self.mem_graph_x = [
+            i / 1000 for i in range(-50 * self.mem_interval, 1, self.mem_interval)]
         self.mem_graph_y = [0 for _ in range(51)]
         pen = pg.mkPen(color=(0, 255, 0), width=5)
-        self.mem_line = self.mem_usage_graph.plot(self.mem_graph_x, self.mem_graph_y, pen=pen)
+        self.mem_line = self.mem_usage_graph.plot(
+            self.mem_graph_x, self.mem_graph_y, pen=pen)
         self.mem_usage_graph.setLabel('left', "Memory Used (GB)")
         self.mem_usage_graph.setLabel('bottom', "Time elapsed (seconds)")
         data = self.system_info.get_mem_data()
@@ -81,7 +83,8 @@ class MemoryTab(TaskManagerWindow):
 
         # update graph
         self.mem_graph_x.pop(0)
-        self.mem_graph_x.append(self.mem_graph_x[-1] + (self.mem_interval / 1000))
+        self.mem_graph_x.append(
+            self.mem_graph_x[-1] + (self.mem_interval / 1000))
         self.mem_graph_y.pop(0)
         self.mem_graph_y.append(used)
         self.mem_line.setData(self.mem_graph_x, self.mem_graph_y)

@@ -6,6 +6,14 @@ venv/
 **/__pycache__/
 .vscode/
 report.csv
-/Report/
-report/
-Report/
+
+# report files
+Report/graph.tex
+Report/log.tex
+Report/main.log
+Report/main.pdf
+Report/sys_info.tex
+
+# build files
+build/
+dist/
