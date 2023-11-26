@@ -65,6 +65,8 @@ class ProcessTab(TaskManagerWindow):
                 self, "Permission Denied", "You do not have required permissions for this task")
 
     def update_process_table(self):
+        # disable sorting while inserting
+        self.table_processes.setSortingEnabled(False)
         # gets list of lists of all processes
         data = self.system_info.get_process_data()
         n_row = len(data)
@@ -89,6 +91,8 @@ class ProcessTab(TaskManagerWindow):
 
                 my_item.setTextAlignment(4)
                 self.table_processes.setItem(row, column, my_item)
+        # re-enable sorting once data is updated
+        self.table_processes.setSortingEnabled(True)
 
     def notify(self, row):
         pid = row[1]
