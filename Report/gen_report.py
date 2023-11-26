@@ -85,9 +85,7 @@ class ReportTemplate:
         {timestamp} & {cpu_usage}  & {ram_usage} \\\\
         '''
         lines = []
-        lines.append(log_template.format(timestamp="timestamp",
-                                         cpu_usage="cpu usage",
-                                         ram_usage="ram usage"))
+
         for data in self.data["stats"]:
             formatted_timestamp = datetime.fromtimestamp(
                 data.timestamp).strftime("%H:%M:%S")
@@ -161,7 +159,7 @@ class Report:
     def __init__(self,
                  interval: int = 10,
                  period: int = 15*60,
-                 csv_file: str = "./report.pdf"
+                 output_file: str = "./report.pdf"
                  ) -> None:
         self.system_info = SystemInfo()
 
@@ -171,7 +169,7 @@ class Report:
             "ram_info": {},
         }
 
-        self.csv_file = csv_file
+        self.output_file = output_file
 
         self.max_samples = math.ceil(period/interval)
 
@@ -210,22 +208,22 @@ class Report:
 
     def generate_report(self):
         self.report_template.prepare_render()
-        # self.report_template.render(output=self.csv_file)
+        # self.report_template.render(output=self.output_file)
 
-    def save_csv(self, csv_file: str = None):
+    def save_csv(self, output_file: str = None):
         """
         Save data to csv file
         Args:
-            csv_file (str, optional): csv file path. Defaults to ./reports.csv.
+            output_file (str, optional): csv file path. Defaults to ./reports.csv.
         """
-        if not csv_file:
-            csv_file = self.csv_file
+        if not output_file:
+            output_file = self.output_file
         lines = ["timestamp, cpu_usage, ram_usage, network_usage\n"]
         for data in self.data["stats"]:
             lines.append(
                 f"{data.timestamp}, {data.cpu_usage}, {data.ram_usage}\n")
-        with open(csv_file, "w") as f:
+        with open(output_file, "w") as f:
             f.writelines(lines)
 
     def __del__(self):
-        self.report_template.render(output=self.csv_file)
+        self.report_template.render(output=self.output_file)
