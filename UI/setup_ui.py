@@ -10,7 +10,7 @@ class TaskManagerWindow(QWidget, Ui_main_window):
 
         # set UI and icon
         self.setupUi(self)
-        self.setWindowIcon(QIcon("../Media/icon.png"))
+        self.setWindowIcon(QIcon("Media/icon.png"))
 
         # system info
         self.system_info = SystemInfo()

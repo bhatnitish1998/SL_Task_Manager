@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QTableWidgetItem, QMessageBox
+from PyQt6.QtWidgets import QTableWidgetItem, QMessageBox, QTableWidget
 from PyQt6.QtCore import QTimer
 
 import subprocess
@@ -30,7 +30,7 @@ class ProcessTab(TaskManagerWindow):
 
         # set process update timer
         self.proc_timer = QTimer()
-        self.proc_timer.setInterval(1000)
+        self.proc_timer.setInterval(3000)
         self.proc_timer.timeout.connect(self.update_process_table)
         self.proc_timer.start()
 
@@ -38,7 +38,7 @@ class ProcessTab(TaskManagerWindow):
         self.button_endtask.clicked.connect(self.end_task)
 
         # set notification timer
-        self.notify_interval = 60000
+        self.notify_interval = 30000
         self.notify_timer = QTimer()
         self.notify_timer.setInterval(self.notify_interval)
         self.notify_timer.timeout.connect(self.set_flag_true)
@@ -47,6 +47,9 @@ class ProcessTab(TaskManagerWindow):
         self.notify_flag = True
         self.notify_level = 100
         self.threshold_breach = defaultdict(lambda: 0)
+
+        # initialize process table
+        self.update_process_table()
 
     def set_flag_true(self):
         self.notify_flag = True
