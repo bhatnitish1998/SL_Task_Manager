@@ -42,7 +42,8 @@ class NetworkInfo:
         """
         Reads the network statistics file and returns its contents as a string.
         """
-        self.stat_fd.seek(0)
+        self.stat_fd.close()
+        self.stat_fd = open(self.stat_file, "r")
         return self.stat_fd.read()
 
     @property
